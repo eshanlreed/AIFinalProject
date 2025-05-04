@@ -1,14 +1,8 @@
-class blackjackAgent:
-
-    #implement an agent for basic strategy
-    
-    #def getAction(self, state: blackjack):
-    #    playerHand = state.my_hand
-    #    dealerHand = state.dealer_hand
-    
+import blackjack
+import blackjackState
 
 
-    
+class BlackjackAgent:
 
     #basic strategy - hard totals
     #lookup is done with [['dealer upcard'], ['player score']]]
@@ -220,9 +214,61 @@ class blackjackAgent:
     softTotalDic[('A', '3')] = "hit"
     softTotalDic[('A', '2')] = "hit"
 
-    if __name__ == "__main__":
-        check = hardTotalDic[('A', '17')]
-        print(check)
+    #sums a given hand, will consider As as 11 due to the fact that soft aces are caught by the reflex agent
+    def sumHand(self, hand):
+        total = 0
+        for card in hand:
+            if card == '2':
+                total += 2
+            if card == '3':
+                total += 3
+            if card == '4':
+                total += 4
+            if card == '5':
+                total += 5
+            if card == '6':
+                total += 6
+            if card == '7':
+                total += 7
+            if card == '8':
+                total += 8
+            if card == '9':
+                total += 9
+            if card == 'K' or card == 'Q' or card == 'J' or card == '10':
+                total += 10
+            if card == 'A':
+                total += 11
+        return total
+        
+    #implement an agent for basic strategy
+    def getAction(self, state: blackjackState.BlackjackState):
+        playerHand = state.player_hand.copy()
+        dealerHand = state.dealer_hand.copy()
+        dealerUpCard = dealerHand[0]
+        print(dealerUpCard)
+        if 'A' in playerHand:
+            print("YUP ACE HERE")
+            withoutAce = playerHand.copy()
+            withoutAce.remove('A')
+            withoutAceTotal = self.sumHand(withoutAce)
+            if withoutAceTotal < 10:
+                return self.softTotalDic[(dealerUpCard, str(withoutAceTotal))]
+            
+        handTotal = self.sumHand(player_hand)
+        return self.hardTotalDic[(dealerUpCard, str(handTotal))]
+
+if __name__ == "__main__":
+    #test code to ensure propper lookup
+    deck = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+    reveal_dealer = False
+    hand_active = True
+    player_hand = ["A", "9"]
+    dealer_hand = ["A", "7"]
+    test = blackjackState.BlackjackState(deck, reveal_dealer, hand_active, player_hand, dealer_hand)
+    agent = BlackjackAgent()
+    action = agent.getAction(test)
+    print(action)
+
 
 
 
