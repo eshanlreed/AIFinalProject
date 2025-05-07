@@ -1,5 +1,5 @@
 #Utilized https://www.youtube.com/watch?v=e3YkdOXhFpQ to build the base of the game
-#I expanded the game to work with Q-Learning
+#I expanded the game to better work with Q-Learning
 import copy
 import random
 import pygame
@@ -104,23 +104,44 @@ class BlackjackGame:
             self.reset_hand()
             self.active = True
             self.initial_deal = True
+            #deal right away
+            self.my_hand = self.deal_cards(self.my_hand, 2)
+            self.dealer_hand = self.deal_cards(self.dealer_hand, 2)
+            #deals cards if there are cards left to deal
+            if not self.episode_over:
+                self.player_score = self.calculate_score(self.my_hand)
+                self.hand_active = True
+                self.add_score = True
+            else:
+                self.active = False
 
     #newHand simulate sthe clicking of new hand
     def newHand(self):
         self.reset_hand()
         self.active = True
         self.initial_deal = True
-            
+        #deal right away
+        self.my_hand = self.deal_cards(self.my_hand, 2)
+        self.dealer_hand = self.deal_cards(self.dealer_hand, 2)
+        #deals cards if there are cards left to deal
+        if not self.episode_over:
+            self.player_score = self.calculate_score(self.my_hand)
+            self.hand_active = True
+            self.add_score = True
+        else:
+            self.active = False
+          
     #executes hits/stands and progresses the game
     def step(self, action):
         if self.episode_over:
-            print("\nDeck exhausted! Game over.")
+            print("Deck exhausted! Game over.")
             return
         
         reward = 0
         done = False
 
-        if action == 1:  # Hit
+        #hit
+        if action == 1:
             self.my_hand = self.deal_cards(self.my_hand)
             if self.episode_over:
                 print("Deck exhausted during hit!")
@@ -129,7 +150,8 @@ class BlackjackGame:
             self.player_score = self.calculate_score(self.my_hand)
             print(f"New Player Hand: {self.my_hand} (Score: {self.player_score})")
             
-            if self.player_score > 21:  # Player busts
+            #player bust
+            if self.player_score > 21:
                 self.hand_active = False
                 self.reveal_dealer = True
                 self.outcome = 1
@@ -141,7 +163,8 @@ class BlackjackGame:
                     self.records[1] += 1
                     self.add_score = False
                 
-        elif action == 0:  # Stand
+        #stand
+        elif action == 0:
             self.hand_active = False
             self.reveal_dealer = True
             self.dealer_score = self.calculate_score(self.dealer_hand)
@@ -203,10 +226,14 @@ class BlackjackGame:
         pScore = self.player_score
         tcount = self.count 
         state = (upCard, pScore, tcount)
+        handDone = False
+        if action == 0:
+            handDone = True
         
-        return state, reward, done or self.episode_over, {}
+        #return state, reward, self.hand_active
+        return state, reward, handDone
     
-    #updates the drawn objects on screen constantly
+    #updates the drawn objects on screen
     def render(self):
         screen.fill('black')
         
@@ -290,22 +317,10 @@ def main():
     while run:
         timer.tick(fps)
         
-        if game.initial_deal:
-            game.my_hand = game.deal_cards(game.my_hand, 2)
-            game.dealer_hand = game.deal_cards(game.dealer_hand, 2)
-            if game.episode_over:
-                print("Deck exhausted!")
-                game.reset_game()
-                continue
-
-            game.player_score = game.calculate_score(game.my_hand)
+        if game.initial_deal and game.active:
             game.initial_deal = False
-            game.hand_active = True
-            game.add_score = True
         
         buttons = game.render()
-
-        game.dealHand()
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -316,13 +331,13 @@ def main():
                 # Press 1 to test HIT
                 if event.key == pygame.K_1:  
                     print("\nTesting HIT action:")
-                    obs, reward, done, info = game.step(1)
-                    print(f"Reward: {reward}, Done: {done}, Info: {info}")
+                    state, reward, done = game.step(1)
+                    print(f"Reward: {reward}, Done: {done}")
                 # Press 0 to test STAND
                 elif event.key == pygame.K_0:  
                     print("\nTesting STAND action:")
-                    obs, reward, done, info = game.step(0)
-                    print(f"Reward: {reward}, Done: {done}, Info: {info}")
+                    state, reward, done = game.step(0)
+                    print(f"Reward: {reward}, Done: {done}")
                 # Press 7 to cycle the bet
                 elif event.key == pygame.K_7:  
                     game.changeBet()
@@ -331,8 +346,9 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 if not game.active:
                     if buttons[0].collidepoint(event.pos):
-                        game.active = True
-                        game.initial_deal = True
+                        game.dealHand()
+                        #game.active = True
+                        #game.initial_deal = True
                 else:
                     #hit
                     if buttons[0].collidepoint(event.pos) and game.player_score < 21 and game.hand_active:
@@ -343,8 +359,9 @@ def main():
                     elif len(buttons) == 3:
                         if buttons[2].collidepoint(event.pos):
                             game.reset_hand()
-                            game.active = True
-                            game.initial_deal = True
+                            game.newHand()
+                            #game.active = True
+                            #game.initial_deal = True
         
         if game.hand_active and game.player_score >= 21:
             game.step(0)
