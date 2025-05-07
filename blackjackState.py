@@ -35,7 +35,9 @@ class BlackjackState:
                 for card in currDeck:
                     pHand = self.player_hand.copy()
                     pHand.append(card)
-                    ret = BlackjackState(self.deck, self.reveal_dealer, self.hand_active, pHand, self.dealer_hand)
+                    newDeck = self.deck.copy()
+                    newDeck.remove(card)
+                    ret = BlackjackState(newDeck, self.reveal_dealer, self.hand_active, pHand, self.dealer_hand)
                     succs.append(ret)
 
         else:
@@ -43,7 +45,9 @@ class BlackjackState:
             for card in currDeck:
                 dHand = self.dealer_hand.copy()
                 dHand.append(card)
-                ret = BlackjackState(self.deck, self.reveal_dealer, self.hand_active, self.player_hand, dHand)
+                newDeck = self.deck.copy()
+                newDeck.remove(card)
+                ret = BlackjackState(newDeck, self.reveal_dealer, self.hand_active, self.player_hand, dHand)
                 succs.append(ret)
         return succs
         
