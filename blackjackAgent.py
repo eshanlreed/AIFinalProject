@@ -244,7 +244,7 @@ class BlackjackAgent:
     def getAction(self, state: blackjackState.BlackjackState):
         playerHand = state.player_hand.copy()
         dealerHand = state.dealer_hand.copy()
-        dealerUpCard = dealerHand[0]
+        dealerUpCard = dealerHand[1]
         print(dealerUpCard)
         if 'A' in playerHand:
             print("YUP ACE HERE")
