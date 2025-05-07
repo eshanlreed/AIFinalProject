@@ -107,6 +107,39 @@ class BlackjackAgent:
     hardTotalDic[('10', '10')] = "hit"
     hardTotalDic[('10', '9')] = "hit"
     hardTotalDic[('10', '8')] = "hit"
+    # dealer upcard -> J
+    hardTotalDic[('J', '17')] = "stand"
+    hardTotalDic[('J', '16')] = "hit"
+    hardTotalDic[('J', '15')] = "hit"
+    hardTotalDic[('J', '14')] = "hit"
+    hardTotalDic[('J', '13')] = "hit"
+    hardTotalDic[('J', '12')] = "hit"
+    hardTotalDic[('J', '11')] = "hit"
+    hardTotalDic[('J', '10')] = "hit"
+    hardTotalDic[('J', '9')] = "hit"
+    hardTotalDic[('J', '8')] = "hit"
+    # dealer upcard -> Q
+    hardTotalDic[('Q', '17')] = "stand"
+    hardTotalDic[('Q', '16')] = "hit"
+    hardTotalDic[('Q', '15')] = "hit"
+    hardTotalDic[('Q', '14')] = "hit"
+    hardTotalDic[('Q', '13')] = "hit"
+    hardTotalDic[('Q', '12')] = "hit"
+    hardTotalDic[('Q', '11')] = "hit"
+    hardTotalDic[('Q', '10')] = "hit"
+    hardTotalDic[('Q', '9')] = "hit"
+    hardTotalDic[('Q', '8')] = "hit"
+    # dealer upcard -> K
+    hardTotalDic[('K', '17')] = "stand"
+    hardTotalDic[('K', '16')] = "hit"
+    hardTotalDic[('K', '15')] = "hit"
+    hardTotalDic[('K', '14')] = "hit"
+    hardTotalDic[('K', '13')] = "hit"
+    hardTotalDic[('K', '12')] = "hit"
+    hardTotalDic[('K', '11')] = "hit"
+    hardTotalDic[('K', '10')] = "hit"
+    hardTotalDic[('K', '9')] = "hit"
+    hardTotalDic[('K', '8')] = "hit"
     # dealer upcard -> A
     hardTotalDic[('A', '17')] = "stand"
     hardTotalDic[('A', '16')] = "hit"
@@ -254,7 +287,7 @@ class BlackjackAgent:
             if withoutAceTotal < 10:
                 return self.softTotalDic[(dealerUpCard, str(withoutAceTotal))]
             
-        handTotal = self.sumHand(player_hand)
+        handTotal = self.sumHand(playerHand)
         return self.hardTotalDic[(dealerUpCard, str(handTotal))]
 
 if __name__ == "__main__":
