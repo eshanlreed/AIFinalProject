@@ -48,7 +48,7 @@ class BlackjackGame:
         self.count = 0
         self.game_deck = copy.deepcopy(decks * one_deck)
         self.records = [0, 0, 0]
-        self.reset_hand(self)
+        self.reset_hand()
     
     #pass in player/dealer hand to calculate hand score & check aces
     def calculate_score(self, hand):
@@ -101,13 +101,13 @@ class BlackjackGame:
     #dealHand simulates the clicking of deal hand
     def dealHand(self):
         if not self.active:
-            self.reset_hand(self)
+            self.reset_hand()
             self.active = True
             self.initial_deal = True
 
     #newHand simulate sthe clicking of new hand
     def newHand(self):
-        self.reset_hand(self)
+        self.reset_hand()
         self.active = True
         self.initial_deal = True
             
@@ -304,6 +304,8 @@ def main():
             game.add_score = True
         
         buttons = game.render()
+
+        game.dealHand()
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

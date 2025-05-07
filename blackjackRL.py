@@ -6,7 +6,7 @@ from blackjackAgent import BlackjackAgent
 from blackjackState import BlackjackState
 
 
-game = BlackjackGame
+game = BlackjackGame()
 
 alpha = .9
 discount = 1
@@ -32,7 +32,7 @@ def chooseAction(state):
         return qTableBet
     
 for episode in range(maxEpisodes):
-    game.reset_game(game)
+    game.reset_game()
     #state is (upcard, playerScoreTotal, count)
     reward = 0
     if not game.dealer_hand:
@@ -51,14 +51,15 @@ for episode in range(maxEpisodes):
         #choose bet (action)
         betAction = chooseAction(state)
         #set bet (with action)
-        game.setBet(game, betAction)
+        game.setBet(betAction)
         #progress game to new hand or first hand
         if game.initial_deal == False:
-            game.dealHand(game)
+            game.dealHand()
             print("NEW DEAL REACHED")
+            print(game.my_hand)
         else:
             #print("NEW HAND REACHED")
-            game.newHand(game)
+            game.newHand()
         nextState = state
         print(game.hand_active)
         while game.hand_active:
